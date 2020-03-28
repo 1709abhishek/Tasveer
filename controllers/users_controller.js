@@ -20,3 +20,8 @@ module.exports.signIn = function(req,res){
 module.exports.create = function(req,res){
     //TODO Later
 }
+
+//sign-In and create a session
+module.exports.createSession = function(req,res){
+    //TODO later
+}
