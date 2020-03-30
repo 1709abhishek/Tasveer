@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
+    },
+    ip: {
+        type: String,
+        required: true
     }
 }, {
     timestamps: true

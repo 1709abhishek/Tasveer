@@ -1,0 +1,26 @@
+<h1>Captcha Window</h1>
+
+<form action="/captcha" method="POST">
+    <div class="g-recaptcha" data-sitekey="6LeF5uQUAAAAAITxtT2yeszPcLLziXtSu4VSD6FY"></div><br>
+    <input type="submit" value="Sign Up">
+
+</form>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script>
+        $(document).ready(function() {
+      $('#comment_form').submit(function() {
+        $(this).ajaxSubmit({
+          error: function(xhr) {
+            status('Error: ' + xhr.status);
+          },
+         success: function(response) {
+          console.log(response);
+         }
+        });
+        //Very important line, it disable the page refresh.
+        return false;
+      });
+    });
+    </script>
