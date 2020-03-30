@@ -66,7 +66,7 @@ module.exports.signUp = function(req,res){
 //get the sign up data
 module.exports.create = function(req,res){
     if(!req.recaptcha.error){
-
+        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         if(isValidPassword(req.body.password)){
             if(req.body.password==req.body.confirm_password){
                 let entry = req.body;

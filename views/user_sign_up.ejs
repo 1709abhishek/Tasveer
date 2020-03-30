@@ -1,25 +1,35 @@
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <h1>Sign Up</h1>
+    <title><%- title %> </title>
+</head>
+<body>
+    <form action="/users/create" method="POST">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+        <% if (showCaptcha) { %>
+            <div class="g-recaptcha" data-sitekey="6LeF5uQUAAAAAITxtT2yeszPcLLziXtSu4VSD6FY"></div><br>
+        <% } %>
+        <input type="submit" value="Sign Up">
+        <% if (success) { %>
+            <div class="alert alert-success"><%- success %></div>
+        <% } else if(passwordErr) { %>
+            <div class="alert alert-danger"><%- passwordErr %></div>
+        <% } else if(dbError) { %>
+            <div class="alert alert-danger"><%- dbError %></div>
+        <% } else if(captchaError) { %>
+            <div class="alert alert-danger"><%- captchaError %></div>
+        <% } %> 
+    </form>
 
-<h1>Sign Up</h1>
+</body>
+<script src="https://www.google.com/recaptcha/api.js"></script>
+</html>
 
-<form action="/users/create" method="POST">
-    <input type="text" name="name" placeholder="Your Name" required>
-    <input type="email" name="email" placeholder="Your Email" required>
-    <input type="password" name="password" placeholder="Password" required>
-    <input type="password" name="confirm_password" placeholder="Confirm Password" required>
-    <% if (showCaptcha) { %>
-        <div class="form-group">
-            <%- recaptcha %>
-        </div>
-    <% } %>
-    <input type="submit" value="Sign Up">
-    <% if (success) { %>
-        <div class="alert alert-success"><%- success %></div>
-    <% } else if(passwordErr) { %>
-        <div class="alert alert-danger"><%- passwordErr %></div>
-    <% } else if(dbError) { %>
-        <div class="alert alert-danger"><%- dbError %></div>
-    <% } else if(captchaError) { %>
-        <div class="alert alert-danger"><%- captchaError %></div>
-    <% } %> 
-</form>
+
