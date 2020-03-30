@@ -57,7 +57,7 @@ module.exports.signUp = function(req,res){
                 success      : req.flash('success'),
                 captchaError : req.flash('captchaError'),
                 passwordErr  : req.flash('passwordError'),
-                dbError      : req.flash('dbError')
+                dbError      : req.flash('databaseError')
             });
         }
     });
@@ -69,16 +69,16 @@ module.exports.create = function(req,res){
 
         if(isValidPassword(req.body.password)){
             if(req.body.password==req.body.confirm_password){
-                let data = req.body;
-                data.ip = ip;
-                let document = new User(data);
+                let entry = req.body;
+                entry.ip = ip;
+                let document = new User(entry);
                 document.save(function(err, resp){
                     if(err){
-                        req.flash("dbError", "Error in database");
+                        req.flash("databaseError", "Error in database");
                         return res.redirect('/');
                     }else{
                         req.flash("success","Saved data successfully");
-                        return res.redirect('/');
+                        return res.redirect('/users/profile');
                     }
                 });
             } else {
@@ -90,8 +90,50 @@ module.exports.create = function(req,res){
             return res.redirect('/');
         }
     }else{
-        req.flash("captchaError", "Invalid captcha");
-        return res.redirect('/');
+
+        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        // Getting today's date.
+        var today = new Date();
+
+        // today's midnight
+        var midToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+        // Get all the docs created today with this IP.
+        User.countDocuments({ip: ip, createdAt: {$gte: midToday}}, function (err, count) { 
+            console.log(count, "Count", "IP", ip);
+
+            if (count < 3) {
+                
+                if(req.body){
+                    if(isValidPassword(req.body.password)){
+                        if(req.body.password==req.body.confirm_password){
+                            let entry = req.body;
+                            entry.ip = ip;
+                            let document = new User(entry);
+                            document.save(function(err, resp){
+                                if(err){
+                                    req.flash("databaseError", "Error in database");
+                                    return res.redirect('/');
+                                }else{
+                                    req.flash("success","Saved data successfully");
+                                    return res.redirect('/users/profile');
+                                }
+                            });
+                        }else {
+                            req.flash("passwordError", "password doesn't match");
+                            return res.redirect('/');
+                        }
+                    }else{
+                        req.flash("passwordError", "Invalid password");
+                        return res.redirect('/');
+                    }
+                }
+            } else { // Case 2.
+                req.flash("captchaError", req.recaptcha.error + " Invalid captcha");
+                return res.redirect('/');
+            }
+        });
+        }
     }
     // if(isValidPassword(req.body.password) && req.body.password != req.body.confirm_password){
     //     return res.redirect('back');
@@ -120,7 +162,6 @@ module.exports.create = function(req,res){
     //             return res.redirect('back');
     //         }
     // });
-}
 
 //sign-In and create a session
 module.exports.createSession = function(req,res){
